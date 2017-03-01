@@ -3,7 +3,8 @@ import {
   Input,
   ElementRef,
   Renderer,
-  HostListener
+  HostListener,
+  NgZone
 } from '@angular/core';
 
 @Component({
@@ -36,8 +37,8 @@ export class ContextmenuComponent {
   context: any = {};
   isVisible: boolean = false;
 
-  constructor(private element: ElementRef, private renderer: Renderer) {
-  }
+  constructor(private element: ElementRef, private renderer: Renderer, 
+    private zone: NgZone) {}
 
   show(x: number, y: number) {
     this.renderer.setElementStyle(this.element.nativeElement, 'left', `${x}px`);
@@ -74,11 +75,15 @@ export class ContextmenuComponent {
 
   @HostListener('document:click', [])
   public onClick(): void {
-    this.hide();
+    this.zone.run(() => {
+      this.hide();
+    })
   }
 
   @HostListener('document:scroll', [])
   public onScroll(): void {
-    this.hide();
+    this.zone.run(() => {
+      this.hide();
+    })
   };
 }
